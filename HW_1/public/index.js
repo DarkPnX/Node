@@ -4,6 +4,10 @@ const path = require('path');
 const startDir = '../testIMG';//где берем файлы
 const endDir = '../ResultIMG';//куда складываем
 
+if(!fs.existsSync(endDir)){
+    fs.mkdirSync(endDir);
+}
+
 const copyFile = (pathFile,nameFile) =>{
     const localDir = path.join(endDir,nameFile[0]);
     if(!fs.existsSync(localDir)){
