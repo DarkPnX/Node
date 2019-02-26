@@ -14,23 +14,12 @@ const copyFile = (pathFile,nameFile) =>{
         fs.mkdirSync(localDir);
     }
     if(!fs.existsSync(path.join(localDir,nameFile))){
-        fs.link(pathFile,path.join(localDir,nameFile), err => {
-            if (err) {
-                console.error(err.message);
-                return;
-            }
-            fs.unlink(pathFile,err=>{
-                if(err){
-                    console.log(err);
-                    return;
-                }
-            });
-        });
+        fs.linkSync(pathFile,path.join(localDir,nameFile));
+        fs.unlinkSync(pathFile);
     }
 }
 
-
-const checkDir = pathDir =>{
+const checkDir = (pathDir) =>{
     try{
         const files = fs.readdirSync(pathDir);
         files.forEach(file=>{
@@ -42,29 +31,15 @@ const checkDir = pathDir =>{
                 copyFile(localPath,file);
             }
         });
-    }catch(err){
-        throw(new Error('error start directory'));
-    }
-}
-
-const delDir = pathDir =>{
-    const buffFiles = fs.readdirSync(pathDir);
-    if(buffFiles.length>0){
-        buffFiles.forEach(file=>{
-            const fullPathFile = path.join(pathDir,file);
-            delDir(fullPathFile);
-        });
-    }else{
         fs.rmdir(pathDir,err=>{
             if(err){
                 console.log(err);
                 return;
             }
         });
+    }catch(err){
+        throw(new Error('error start directory'));
     }
 }
-checkDir(startDir);
 
-setImmediate(() => {
-    delDir(startDir);
-});
+checkDir(startDir);
